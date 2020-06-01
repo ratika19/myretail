@@ -1,1 +1,2 @@
+
 INSERT INTO "product" ("product_id","product_code","product_description","product_value","currency_code","inserted_by","insert_date","updated_by","update_date") VALUES (13860428,'65654674567','Music System',133.0,'USD','platformuser','2020-05-31 00:00:00','','');

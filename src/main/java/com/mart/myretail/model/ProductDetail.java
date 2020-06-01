@@ -23,6 +23,14 @@ public class ProductDetail {
         this.brand = brand;
     }
 
+    public ProductDetail() {
+    }
+
+    public ProductDetail(String name, String brand) {
+        this.name = name;
+        this.brand = brand;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
