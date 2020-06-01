@@ -16,6 +16,8 @@ The Application also use in memory cache using Ehcache for caching product name/
 
 # API(s) Documentation
 
+## GetProductDetails
+
 URL: http://127.0.0.1:8080/myretail/product/13860428
 
 Method: GET
@@ -52,6 +54,7 @@ Http Status code: 404 - If Product with given id is not available
 
 Http Status code: 400 - Bad request
 
+## UpdateProductDetails
 
 URL: http://127.0.0.1:8080/myretail/product/13860428
 
@@ -113,4 +116,5 @@ Response Body (JSON)
 }
 
 # myRetail Sequence Diagram
+
 
