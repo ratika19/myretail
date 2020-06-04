@@ -29,12 +29,7 @@ public class ProductServiceImpl implements ProductService{
     RetailProductRepo retailProductRepo;
 
     @Autowired
-    RestTemplate restTemplate;
-
-    @Value("${product.detail.external.url}")
-    private String productDetailUrl;
-    @Value("${product.detail.external.exclusion}")
-    private String detailExclusions;
+    RestService restService;
 
 
     /** fetches product details by product id **/
@@ -50,7 +45,7 @@ public class ProductServiceImpl implements ProductService{
 
                 ProductPrice productPrice = new ProductPrice(product.getProductValue(), product.getCurrencyCode());
 
-                ProductDetail productDetail = getProductName(id);
+                ProductDetail productDetail = restService.getProductName(id);
 
                 if(Objects.isNull(productDetail))
                     throw new BusinessServiceException("Unable to fetch product name");
@@ -82,10 +77,11 @@ public class ProductServiceImpl implements ProductService{
             boolean result = retailProductRepo.save(product);
 
             if(!result)
-                throw new BusinessServiceException("Error occurred in updating product");
+                throw new BusinessServiceException("Error occurred while updating product");
         }catch(Exception e) {
             if( e instanceof BusinessServiceException)
                 throw e;
+
             logger.error("Exception occurred while updating product {} ", e.getMessage());
         }
 
@@ -93,31 +89,6 @@ public class ProductServiceImpl implements ProductService{
     }
 
 
-    @Cacheable(value = "productDetails", key = "#id", unless="#result == null")
-    private ProductDetail getProductName(int id){
-        ProductDetail productDetail = new ProductDetail();
-
-        try{
-            String response = restTemplate.getForObject(productDetailUrl+"/"+id, String.class);
-            JSONObject responseObj = new JSONObject(response);
-            JSONObject productNode = responseObj.getJSONObject("product");
-            JSONObject itemNode = productNode.getJSONObject("item");
-            JSONObject descNode = itemNode.getJSONObject("product_description");
-            productDetail.setName(descNode.getString("title"));
-            JSONObject brandNode = itemNode.getJSONObject("product_brand");
-            productDetail.setBrand(brandNode.getString("brand"));
-        } catch (RestClientException ex){
-            logger.error("Rest client exception occurred {} ",ex.getMessage());
-            return null;
-        } catch (JSONException jex) {
-            logger.error("Product Name/Brand not available {} ", jex.getMessage());
-            return null;
-        } catch(Exception e) {
-            logger.error("Exception occurred while fetching product name {} ", e.getMessage());
-            return null;
-        }
-        return productDetail;
-    }
 
     private RetailProduct mapToRetailProductVO(RetailProduct retailProduct, ProductPrice price, ProductDetail details, String productCode, int id) {
         if (!Objects.isNull(retailProduct)) {

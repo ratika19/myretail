@@ -8,7 +8,13 @@ public class BusinessServiceException extends Exception{
         String message;
 
         public BusinessServiceException(String message) {
+
             super(message);
+        }
+
+        @Override
+        public String getMessage() {
+            return this.message;
         }
 
         @Override

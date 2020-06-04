@@ -2,9 +2,13 @@ package com.mart.myretail.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class ProductPrice {
+public class ProductPrice implements Serializable {
+
+    private static final long serialVersionUID = 6470090944414208596L;
+
 
     @JsonProperty("value")
     private float value;

@@ -2,9 +2,12 @@ package com.mart.myretail.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class RetailProduct {
+public class RetailProduct implements Serializable {
+
+    private static final long serialVersionUID = 6470090944414208496L;
 
     private int id;
 

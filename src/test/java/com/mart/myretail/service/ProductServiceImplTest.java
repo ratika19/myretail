@@ -3,6 +3,7 @@ package com.mart.myretail.service;
 import com.mart.myretail.entity.Product;
 import com.mart.myretail.exception.BusinessServiceException;
 import com.mart.myretail.exception.NotFoundException;
+import com.mart.myretail.model.ProductDetail;
 import com.mart.myretail.model.ProductPrice;
 import com.mart.myretail.model.RetailProduct;
 import com.mart.myretail.repository.RetailProductRepo;
@@ -17,8 +18,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.web.client.RestTemplate;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -26,14 +25,19 @@ public class ProductServiceImplTest {
 
     @Mock
     RetailProductRepo retailProductRepoMock;
+
     @Mock
-    RestTemplate restTemplateMock;
+    RestService restServiceMock;
 
     @InjectMocks
     ProductServiceImpl service;
 
+
+
+
     public int productId;
     public String productDetailJsonResponse;
+    public ProductDetail productDetail;
     public Product productObj;
     public String detailUrl;
 
@@ -41,10 +45,8 @@ public class ProductServiceImplTest {
     public void setUp() {
 
         productId = 1234;
-        productDetailJsonResponse = "{'product':{'item':{'product_brand':{'brand':'Sony'},'product_description':{'title':'Music System'}}}}";
         productObj = new Product(1234,"35467",(float) 133.0, "USD");
-        detailUrl = "https://redsky.target.com/v2/pdp/tcin";
-        ReflectionTestUtils.setField(service, "productDetailUrl", detailUrl);
+        productDetail = new ProductDetail("Music System", "Sony");
     }
 
     @After
@@ -55,7 +57,7 @@ public class ProductServiceImplTest {
     @Test
     public void testGetProductById(){
         doReturn(productObj).when(retailProductRepoMock).findById(productId);
-        doReturn(productDetailJsonResponse).when(restTemplateMock).getForObject(detailUrl+"/"+productId, String.class);
+        doReturn(productDetail).when(restServiceMock).getProductName(productId);
 
         RetailProduct retailProduct = null;
         try {
@@ -72,6 +74,7 @@ public class ProductServiceImplTest {
     public void testNotFoundExceptionToGetProductById(){
 
         doReturn(null).when(retailProductRepoMock).findById(productId);
+
         //Check if NotFoundException is thrown when Product is not available
         Exception exception = Assertions.assertThrows(NotFoundException.class, () -> {
             service.getProductById(productId);
@@ -81,7 +84,8 @@ public class ProductServiceImplTest {
     @Test
     public void testNotBusinessServiceException(){
         doReturn(productObj).when(retailProductRepoMock).findById(productId);
-        doReturn(null).when(restTemplateMock).getForObject(detailUrl+"/"+productId, String.class);
+        doReturn(null).when(restServiceMock).getProductName(productId);
+
         //Check if BusinessServiceException is thrown when not able to fetch details
         Exception exception = Assertions.assertThrows(BusinessServiceException.class, () -> {
             service.getProductById(productId);
@@ -92,7 +96,7 @@ public class ProductServiceImplTest {
     @Test
     public void testUpdateProductDetails(){
         doReturn(productObj).when(retailProductRepoMock).findById(productId);
-        doReturn(productDetailJsonResponse).when(restTemplateMock).getForObject(detailUrl+"/"+productId, String.class);
+        doReturn(productDetail).when(restServiceMock).getProductName(productId);
 
         RetailProduct retailProduct = null;
         try {
@@ -121,7 +125,7 @@ public class ProductServiceImplTest {
     @Test
     public void testBusinessServiceExceptionIfUpdateProductDetailsFails(){
         doReturn(productObj).when(retailProductRepoMock).findById(productId);
-        doReturn(productDetailJsonResponse).when(restTemplateMock).getForObject(detailUrl+"/"+productId, String.class);
+        doReturn(productDetail).when(restServiceMock).getProductName(productId);
 
         RetailProduct retailProduct = null;
         try {

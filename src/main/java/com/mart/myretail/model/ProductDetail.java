@@ -1,8 +1,12 @@
 package com.mart.myretail.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class ProductDetail {
+public class ProductDetail implements Serializable {
+
+    private static final long serialVersionUID = 6470090944416208496L;
+
 
     private String name;
     private String brand;
