@@ -115,6 +115,7 @@ Response Body (JSON)
 
 }
 
+
 # myRetail Sequence Diagram
 
 <img src="myRetailSequenceDiagram.png">
